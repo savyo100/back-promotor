@@ -17,7 +17,6 @@ firebase.json
 
 database-debug.log
 
-# Supabase
+# Supabase.ts deve ser ignorado
 
 ./src/config/supabase.ts
-
