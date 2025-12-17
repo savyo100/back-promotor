@@ -1,9 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+dotenv.config();
 
-// Substitua pelos valores do seu projeto Supabase
-const SUPABASE_URL = 'https://sua-url-do-supabase.supabase.co';
-const SUPABASE_ANON_KEY = 'sua-chave-anonima';
+const SUPABASE_URL = 'https://fonwtnxbxyursbmafqsu.supabase.co';
+const supabaseKey = process.env.SUPABASE_KEY;
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+if (!supabaseKey) {
+  throw new Error('A variável de ambiente SUPABASE_KEY não está definida.');
+}
+
+const supabase = createClient(SUPABASE_URL, supabaseKey);
 
 export default supabase;
