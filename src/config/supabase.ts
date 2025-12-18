@@ -3,12 +3,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const SUPABASE_URL = 'https://fonwtnxbxyursbmafqsu.supabase.co';
-const supabaseKey = process.env.SUPABASE_KEY;
+const supabaseRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!supabaseKey) {
-  throw new Error('A variável de ambiente SUPABASE_KEY não está definida.');
+if (!supabaseRoleKey) {
+  throw new Error('A variável de ambiente SUPABASE_SERVICE_ROLE_KEY não está definida.');
 }
 
-const supabase = createClient(SUPABASE_URL, supabaseKey);
+const supabase = createClient(SUPABASE_URL, supabaseRoleKey);
 
 export default supabase;

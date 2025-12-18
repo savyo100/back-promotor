@@ -1,6 +1,7 @@
 import { SupabaseRepository } from '../repositories/SupabaseUserRepository';
 import { Supervisor } from '../types/supervisor';
 import { DashboardData } from '../types/dashboard';
+import { CreateSupervisorDTO } from '../dto/create-supervisor.dto';
 
 export default class SupervisorService {
   async getAllSupervisors(): Promise<Supervisor[]> {
@@ -21,7 +22,7 @@ export default class SupervisorService {
     }
   }
 
-  async createSupervisor(supervisor: Omit<Supervisor, 'id'>): Promise<Supervisor> {
+  async createSupervisor(supervisor: CreateSupervisorDTO): Promise<Supervisor> {
     try {
       return await SupabaseRepository.supervisores.create(supervisor);
     } catch (error) {

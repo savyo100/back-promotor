@@ -11,6 +11,13 @@ const promotorController = new PromotorController();
 const localizacaoController = new LocalizacaoController();
 const leadController = new LeadController();
 
+// rotas d supervisor para desenvolvimento
+router.get('/supervisores', supervisorController.getAllSupervisors);
+router.get('/supervisores/:id', supervisorController.getSupervisorById);
+router.post('/supervisores', supervisorController.createSupervisor);
+router.delete('/supervisores/:id', supervisorController.deleteSupervisor);
+
+
 // Dashboard
 router.get('/dashboard', supervisorController.getDashboardData);
 
@@ -34,7 +41,6 @@ router.get(
 // Leads (Supervisor)
 router.get('/leads', leadController.getLeadsByPromotor);
 router.get('/leads/:id', leadController.getLeadById);
-router.put('/leads/:id', leadController.updateLead);
-router.delete('/leads/:id', leadController.deleteLead);
+
 
 export default router;

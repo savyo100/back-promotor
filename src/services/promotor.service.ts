@@ -1,5 +1,7 @@
 import { SupabaseRepository } from '../repositories/SupabaseUserRepository';
 import { Promotor } from '../types/promotor';
+import { CreatePromotorDTO } from '../dto/create-promotor.dto';
+
 
 export class PromotorService {
   // Obtém todos os promotores
@@ -21,9 +23,9 @@ export class PromotorService {
   }
 
   // Cria um novo promotor
-  async createPromotor(promotor: Omit<Promotor, 'id'>): Promise<Promotor> {
+  async createPromotor(data: CreatePromotorDTO): Promise<Promotor> {
     try {
-      return await SupabaseRepository.promotores.create(promotor);
+      return await SupabaseRepository.promotores.create(data);
     } catch (error) {
       throw new Error(`Erro ao criar promotor: ${error instanceof Error ? error.message : String(error)}`);
     }
@@ -40,7 +42,7 @@ export class PromotorService {
   // Atualiza a localização de um promotor
   async updatePromotorLocation(id: string, lat: number, lng: number): Promise<void> {
     try {
-      await SupabaseRepository.promotores.updateLocation(id, lat, lng);
+      await SupabaseRepository.promotores.updateLocalizacao(id, lat, lng);
     } catch (error) {
       throw new Error(`Erro ao atualizar a localização do promotor com ID ${id}: ${error instanceof Error ? error.message : String(error)}`);
     }

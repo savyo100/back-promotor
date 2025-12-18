@@ -1,5 +1,5 @@
 export interface Supervisor {
-  id: string; // UID do Firebase
+  id: string; // auth.users.id
   nome: string;
   email: string;
   telefone: string;

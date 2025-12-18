@@ -1,63 +1,192 @@
 import supabase from '../config/supabase'; // Importe seu arquivo de configuração
 import { Promotor } from '../types/promotor';
+import { CreatePromotorDTO } from '../dto/create-promotor.dto';
 import { Lead } from '../types/lead';
 import { Localizacao } from '../types/localizacao';
 import { Jornada } from '../types/jornada';
 import { Supervisor } from '../types/supervisor';
+import { CreateSupervisorDTO } from '../dto/create-supervisor.dto';
 import { DashboardData } from '../types/dashboard';
+import { update } from 'firebase/database';
 
 
 
 export const SupabaseRepository = {
 
 // --- MÉTODOS PARA SUPERVISORES ---
-  supervisores: {
-    async getAll() {
-      const { data, error } = await supabase
-        .from('supervisores')
-        .select('*');
-      if (error) throw error;
-      return data as Supervisor[];
-    },
+supervisores: {
 
-    async getById(id: string) {
-      const { data, error } = await supabase
-        .from('supervisores')
-        .select('*')
-        .eq('id', id)
-        .single();
-      if (error) throw error;
-      return data as Supervisor;
-    },
+  async getAll() {
+    const { data, error } = await supabase
+      .from('supervisores')
+      .select('*');
 
-    async create(supervisor: Omit<Supervisor, 'id'>) {
-      const { data, error } = await supabase
-        .from('supervisores')
-        .insert([supervisor])
-        .select()
-        .single();
-      if (error) throw error;
-      return data as Supervisor;
-    },
-    async update(id: string, supervisor: Omit<Supervisor, 'id'>) {
-      const { data, error } = await supabase
-        .from('supervisores')
-        .update(supervisor)
-        .eq('id', id)
-        .select()
-        .single();
-      if (error) throw error;
-      return data as Supervisor;
-    },
-    async delete(id: string) {
-      const { error } = await supabase
-        .from('supervisores')
-        .delete()
-        .eq('id', id);
-      if (error) throw error;
-    },
+    if (error) throw error;
+    return data as Supervisor[];
   },
 
+  async getById(id: string) {
+    const { data, error } = await supabase
+      .from('supervisores')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    return data as Supervisor;
+  },
+
+  async create(data: CreateSupervisorDTO) {
+    // 1️⃣ Criar no Auth
+    const { data: authData, error: authError } =
+      await supabase.auth.admin.createUser({
+        email: data.email,
+        password: data.password,
+        email_confirm: true,
+        user_metadata: {
+          role: 'supervisor',
+        },
+      });
+
+    if (authError || !authData.user) throw authError;
+
+    // 2️⃣ Criar no banco
+    const { data: dbData, error: dbError } = await supabase
+      .from('supervisores')
+      .insert({
+        id: authData.user.id,
+        nome: data.nome,
+        email: data.email,
+        telefone: data.telefone,
+      })
+      .select()
+      .single();
+
+    if (dbError) throw dbError;
+
+    return dbData as Supervisor;
+  },
+
+  async update(id: string, supervisor: Partial<Supervisor>) {
+    const { data, error } = await supabase
+      .from('supervisores')
+      .update(supervisor)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data as Supervisor;
+  },
+
+
+  async delete(id: string) {
+    // Remove do Auth
+    await supabase.auth.admin.deleteUser(id);
+
+    // Remove do banco
+    const { error } = await supabase
+      .from('supervisores')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  },
+},
+
+// --- MÉTODOS PARA PROMOTORES ---
+
+promotores: {
+
+  async getAll() {
+    const { data, error } = await supabase
+      .from('promotores')
+      .select('*');
+
+    if (error) throw error;
+    return data as Promotor[];
+  },
+
+  async getById(id: string) {
+    const { data, error } = await supabase
+      .from('promotores')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    return data as Promotor;
+  },
+
+  async create(data: CreatePromotorDTO) {
+    // 1️⃣ Criar no Auth
+    const { data: authData, error: authError } =
+      await supabase.auth.admin.createUser({
+        email: data.email,
+        password: data.password,
+        email_confirm: true,
+        user_metadata: {
+          role: 'promotor',
+          supervisorId: data.supervisorId,
+        },
+      });
+
+    if (authError || !authData.user) throw authError;
+
+    // 2️⃣ Criar no banco
+    const { data: dbData, error: dbError } = await supabase
+      .from('promotores')
+      .insert({
+        id: authData.user.id,
+        nome: data.nome,
+        email: data.email,
+        telefone: data.telefone,
+        supervisor_id: data.supervisorId,
+        status_jornada: 'inativo',
+      })
+      .select()
+      .single();
+
+    if (dbError) throw dbError;
+
+    return dbData as Promotor;
+  },
+
+  async update(id: string, promotor: Partial<Promotor>) {
+    const { data, error } = await supabase
+      .from('promotores')
+      .update(promotor)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data as Promotor;
+  },
+//Atuliza localização do pormotor com id lat e long
+async updateLocalizacao(id: string, lat: number, lng: number) {
+    const { data, error } = await supabase
+      .from('promotores')
+      .update({ lat, lng })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data as Promotor;
+  },
+  async delete(id: string) {
+    // Remove do Auth
+    await supabase.auth.admin.deleteUser(id);
+
+    // Remove do banco
+    const { error } = await supabase
+      .from('promotores')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  },
+},
 
 
   // --- MÉTODOS PARA LOCALIZAÇÃO ---
@@ -106,64 +235,7 @@ export const SupabaseRepository = {
   },
 
   
-  // --- MÉTODOS PARA PROMOTORES ---
-  promotores: {
-    async getAll() {
-      const { data, error } = await supabase
-        .from('promotores')
-        .select('*');
-      if (error) throw error;
-      return data as Promotor[];
-    },
-
-    async getById(id: string) {
-      const { data, error } = await supabase
-        .from('promotores')
-        .select('*')
-        .eq('id', id)
-        .single();
-      if (error) throw error;
-      return data as Promotor;
-    },
-
-    async create(promotor: Omit<Promotor, 'id'>) {
-      const { data, error } = await supabase
-        .from('promotores')
-        .insert([promotor])
-        .select()
-        .single();
-      if (error) throw error;
-      return data as Promotor;
-    },
-    // Atualiza um promotor existente
-    async update(id: string, promotor: Omit<Promotor, 'id'>) {
-      const { data, error } = await supabase
-        .from('promotores')
-        .update(promotor)
-        .eq('id', id)
-        .select()
-        .single();
-      if (error) throw error;
-      return data as Promotor;
-    },
-
-    async updateLocation(id: string, lat: number, lng: number) {
-      const { error } = await supabase
-        .from('promotores')
-        .update({ 
-          ultimaLocalizacao: { lat, lng, timestamp: Date.now() } 
-        })
-        .eq('id', id);
-      if (error) throw error;
-    },
-    async delete(id: string) {
-      const { error } = await supabase
-        .from('promotores')
-        .delete()
-        .eq('id', id);
-      if (error) throw error;
-    },
-  },
+  
 
   // --- MÉTODOS PARA LEADS ---
   leads: {

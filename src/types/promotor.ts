@@ -1,5 +1,5 @@
 export interface Promotor {
-  id: string;
+  id: string; // auth.users.id
   supervisorId: string; // 🔥 vínculo obrigatório com Supervisor
 
   nome: string;
