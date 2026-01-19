@@ -31,4 +31,16 @@ export class AuthService {
       throw new Error('Erro ao realizar logout');
     }
   }
+  async me(token: string) {
+    const { data, error } = await supabase.auth.getUser(token);
+
+    if (error || !data.user) {
+      throw new Error('Usuário não autenticado');
+    }
+
+    return {
+      id: data.user.id,
+      email: data.user.email,
+    };
+  }
 }
