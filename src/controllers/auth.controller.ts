@@ -39,4 +39,22 @@ export class AuthController {
       });
     }
   }
+
+  async me(req: Request, res: Response): Promise<void> {
+    try {
+      const token = req.headers.authorization?.replace('Bearer ', '');
+
+      if (!token) {
+        res.status(401).json({ error: 'Token não informado' });
+        return;
+      }
+
+      const user = await authService.me(token);
+      res.status(200).json(user);
+    } catch (error) {
+      res.status(401).json({
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
 }
