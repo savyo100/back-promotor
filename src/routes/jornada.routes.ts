@@ -1,7 +1,10 @@
 import { Router } from 'express';
 import { JornadaController } from '../controllers/jornada.controller';
+import { logMiddleware } from '../middleware/logs.middleware';
 
 const router = Router();
+router.use(logMiddleware)
+
 const jornadaController = new JornadaController();
 
 // Rotas para Jornada

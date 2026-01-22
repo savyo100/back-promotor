@@ -4,8 +4,11 @@ import { PromotorController } from '../controllers/promotor.controller';
 import { LocalizacaoController } from '../controllers/localizacao.controller';
 import { LeadController } from '../controllers/lead.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
+import { logMiddleware } from '../middleware/logs.middleware';
+
 
 const router = Router();
+router.use(logMiddleware)
 
 const supervisorController = new SupervisorController();
 const promotorController = new PromotorController();

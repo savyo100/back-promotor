@@ -1,7 +1,10 @@
 import { Router } from 'express';
 import { LocalizacaoController } from '../controllers/localizacao.controller';
+import { logMiddleware } from '../middleware/logs.middleware';
 
 const router = Router();
+router.use(logMiddleware);
+
 const localizacaoController = new LocalizacaoController();
 
 // Rota para registrar uma nova localização

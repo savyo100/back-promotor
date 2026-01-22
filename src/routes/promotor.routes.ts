@@ -3,9 +3,12 @@ import { JornadaController } from '../controllers/jornada.controller';
 import { LocalizacaoController } from '../controllers/localizacao.controller';
 import { LeadController } from '../controllers/lead.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
+import { logMiddleware } from '../middleware/logs.middleware';
 
 const router = Router();
 router.use(authMiddleware);
+router.use(logMiddleware);
+
 const jornadaController = new JornadaController();
 const localizacaoController = new LocalizacaoController();
 const leadController = new LeadController();

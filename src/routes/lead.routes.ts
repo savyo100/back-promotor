@@ -1,7 +1,10 @@
 import { Router } from 'express';
 import { LeadController } from '../controllers/lead.controller';
+import { logMiddleware } from '../middleware/logs.middleware';
 
 const router = Router();
+router.use(logMiddleware);
+
 const leadController = new LeadController();
 
 // Rota para criar um novo lead
