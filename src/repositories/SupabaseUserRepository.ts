@@ -27,6 +27,25 @@ function mapLeadsFromDB(data: any[]): Lead[] {
   return data.map(mapLeadFromDB).filter((lead): lead is Lead => lead !== null);
 }
 
+function mapPromotorFromDB(data: any): Promotor {
+  return {
+    id: data.id,
+    supervisorId: data.supervisor_id,
+    nome: data.nome,
+    telefone: data.telefone,
+    email: data.email,
+    statusJornada: data.status_jornada,
+    ultimaLocalizacao: data.ultima_localizacao
+      ? {
+          lat: data.ultima_localizacao.lat,
+          lng: data.ultima_localizacao.lng,
+          timestamp: data.ultima_localizacao.timestamp,
+        }
+      : undefined,
+    criadoEm: data.criado_em ? new Date(data.criado_em).getTime() : 0,
+  };
+}
+
 export const SupabaseRepository = {
   // --- MÉTODOS GENÉRICOS DE USUÁRIO ---
   user: {
@@ -117,7 +136,7 @@ export const SupabaseRepository = {
     async getAll(): Promise<Promotor[]> {
       const { data, error } = await supabase.from('promotores').select('*');
       if (error) throw error;
-      return data as Promotor[];
+      return (data || []).map(mapPromotorFromDB);
     },
 
     async getBySupervisorId(supervisorId: string): Promise<Promotor[]> {
@@ -126,7 +145,7 @@ export const SupabaseRepository = {
         .select('*')
         .eq('supervisor_id', supervisorId);
       if (error) throw error;
-      return data as Promotor[];
+      return (data || []).map(mapPromotorFromDB);
     },
 
     async getById(id: string): Promise<Promotor> {
@@ -136,7 +155,7 @@ export const SupabaseRepository = {
         .eq('id', id)
         .single();
       if (error) throw error;
-      return data as Promotor;
+      return mapPromotorFromDB(data);
     },
 
     async create(dto: CreatePromotorDTO): Promise<Promotor> {
@@ -167,7 +186,7 @@ export const SupabaseRepository = {
         .single();
 
       if (dbError) throw dbError;
-      return dbData as Promotor;
+      return mapPromotorFromDB(dbData);
     },
 
     async update(id: string, promotor: Partial<Promotor>): Promise<Promotor> {
@@ -178,7 +197,7 @@ export const SupabaseRepository = {
         .select()
         .single();
       if (error) throw error;
-      return data as Promotor;
+      return mapPromotorFromDB(data);
     },
 
     async delete(id: string): Promise<void> {

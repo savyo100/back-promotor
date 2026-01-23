@@ -25,7 +25,7 @@ export class LocalizacaoService {
     };
 
     await SupabaseRepository.promotores.update(promotorId, {
-      ultimaLocalizacao,
+      ultimaLocalizacao: ultimaLocalizacao,
     });
 
     return novaLocalizacao;

@@ -28,7 +28,7 @@ export class LeadService {
     leadData: Omit<Lead, 'id' | 'criadoPor' | 'criadoEm'>
   ): Promise<Lead> {
     try {
-      const existingLead = await SupabaseRepository.leads.getById(userId);
+      const existingLead = await SupabaseRepository.leads.getById(id);
       if (!existingLead) {
         throw new Error(`Lead com ID ${id} não encontrado.`);
       }
@@ -77,7 +77,7 @@ export class LeadService {
   // Obtém um lead pelo ID para um promotor
   async getLeadById(promotorId: string, id: string): Promise<Lead> {
     try {
-      const lead = await SupabaseRepository.leads.getById(promotorId);
+      const lead = await SupabaseRepository.leads.getById(id);
 
       if (!lead) {
         throw new Error(`Lead com ID ${id} não encontrado.`);
