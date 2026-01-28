@@ -24,16 +24,20 @@ export const SupervisorRepository = {
   },
 
   async create(data: CreateSupervisorDTO): Promise<Supervisor> {
+    // 1️⃣ Criar no Auth
     const { data: authData, error: authError } =
       await supabase.auth.admin.createUser({
         email: data.email,
         password: data.password,
         email_confirm: true,
-        user_metadata: { role: 'supervisor' },
+        user_metadata: {
+          role: 'supervisor',
+        },
       });
 
     if (authError || !authData.user) throw authError;
 
+    // 2️⃣ Criar no banco
     const { data: dbData, error: dbError } = await supabase
       .from('supervisores')
       .insert({
@@ -65,8 +69,10 @@ export const SupervisorRepository = {
   },
 
   async delete(id: string): Promise<void> {
+    // Remove do Auth
     await supabase.auth.admin.deleteUser(id);
 
+    // Remove do banco
     const { error } = await supabase
       .from('supervisores')
       .delete()
