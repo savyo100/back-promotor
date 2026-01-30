@@ -4,12 +4,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const index_routes_1 = __importDefault(require("./routes/index.routes")); // Importa o arquivo index.routes.ts
+const cors_1 = __importDefault(require("cors"));
+const index_routes_1 = __importDefault(require("./routes/index.routes"));
 const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
 const app = (0, express_1.default)();
+app.use((0, cors_1.default)({ origin: "*" }));
 app.use(express_1.default.json());
-// Utiliza as rotas centralizadas no index.routes.ts
 app.use("/", index_routes_1.default);
 app.use('/auth', auth_routes_1.default);
-const PORT = 3000;
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+const PORT = Number(process.env.PORT) || 3333;
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT}`);
+});
