@@ -8,7 +8,7 @@ const app = express();
 const allowedOrigins = [
   "http://172.16.17.12:8080", // frontend dev
   "http://localhost:5173",    // se estiver usando Vite
-  
+  "https://supervisor-hub-73.onrender.com/",
 ];
 
 // 🔹 Configuração CORS com credentials
