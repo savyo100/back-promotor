@@ -12,6 +12,7 @@ const allowedOrigins = [
   "https://supervisor-hub-73.onrender.com/",
   "http://192.168.137.227:8080",
   "https://supervisor-hub-73.onrender.com/login",
+  "http://192.168.194.26:8080",
 ];
 
 // 🔹 Configuração CORS com credentials
