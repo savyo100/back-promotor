@@ -12,6 +12,7 @@ const allowedOrigins = [
     "http://172.16.17.12:8080", // frontend dev
     "http://localhost:5173", // se estiver usando Vite
     "https://supervisor-hub-73.onrender.com/",
+    "https://supervisor-hub-73.onrender.com/login",
 ];
 // 🔹 Configuração CORS com credentials
 app.use((0, cors_1.default)({
