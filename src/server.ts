@@ -5,14 +5,33 @@ import authRoutes from './routes/auth.routes';
 
 const app = express();
 
-app.use(cors({ origin: "*" }));
+const allowedOrigins = [
+  "http://172.16.17.12:8080", // frontend dev
+  "http://localhost:5173",    // se estiver usando Vite
+  
+];
+
+// 🔹 Configuração CORS com credentials
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // Postman ou backend-to-backend
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS não permitido pelo servidor"));
+    }
+  },
+  credentials: true, // permite cookies ou fetch com 'include'
+}));
+
 app.use(express.json());
 
+// 🔹 Rotas
 app.use("/", routes);
 app.use('/auth', authRoutes);
 
+// 🔹 Start server
 const PORT = Number(process.env.PORT) || 3333;
-
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });
